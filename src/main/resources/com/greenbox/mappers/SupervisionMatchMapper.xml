@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.greenbox.mappers.SupervisionMatchMapper">
+
+  <!--实体映射-->
+  <resultMap id="base_result_map" type="com.greenbox.entity.po.SupervisionMatch">
+
+  	<!--监督匹配表主键ID-->
+  	<id column="id" property="id"/>
+
+  	<!--监督时长（单位：分钟）-->
+  	<result column="supervision_duration" property="supervisionDuration"/>
+
+  	<!--监督房间名称-->
+  	<result column="room_name" property="roomName"/>
+
+  	<!--监督匹配记录创建时间-->
+  	<result column="create_time" property="createTime"/>
+
+
+  </resultMap>
+
+  <!--通用查询列-->
+  <sql id="base_column_list">
+  	id, supervision_duration, room_name, create_time 
+  </sql>
+
+  <!--基础查询条件-->
+  <sql id="base_query_condition">
+  	<if test="query.id !=null">
+  		and id = #{query.id}
+  	</if>
+  	<if test="query.supervisionDuration !=null">
+  		and supervision_duration = #{query.supervisionDuration}
+  	</if>
+  	<if test="query.roomName !=null and query.roomName != ''">
+  		and room_name = #{query.roomName}
+  	</if>
+  	<if test="query.createTime !=null">
+  		and create_time = #{query.createTime}
+  	</if>
+  </sql>
+
+  <!--扩展查询条件-->
+  <sql id="base_query_condition_extend">
+  	<if test="query.roomNameFuzzy !=null and query.roomNameFuzzy != ''">
+  		 and room_name like concat('%',#{query.roomNameFuzzy},'%')
+  	</if>
+  	<if test="query.createTimeStart !=null and query.createTimeStart != ''">
+  		 <![CDATA[ and create_time>=str_to_date(#{query.createTimeStart}, '%Y-%m-%d') ]]>
+  	</if>
+  	<if test="query.createTimeEnd !=null and query.createTimeEnd != ''">
+  		 <![CDATA[ and create_time < date_sub(str_to_date(#{query.createTimeEnd}, '%Y-%m-%d'), interval - 1 day) ]]>
+  	</if>
+  </sql>
+
+  <!--通用查询条件-->
+  <sql id="query_condition">
+  	<where>
+  		1
+  		<include refid="base_query_condition"/>
+  		<include refid="base_query_condition_extend"/>
+  	</where>
+  </sql>
+
+  <!--查询列表-->
+  <select id="selectList" resultMap="base_result_map">
+  	SELECT <include refid="base_column_list"/> 
+  	FROM supervision_match
+  	  <include refid="query_condition"/>
+  	  <if test="query.orderBy != null">order by ${query.orderBy}</if>
+  	  <if test="query.simplePage != null">limit #{query.simplePage.start}, #{query.simplePage.end}</if>
+  </select>
+
+  <!--查询数量-->
+  <select id="selectCount" resultType="java.lang.Integer">
+  	SELECT count(1) 
+  	FROM supervision_match
+  	  <include refid="query_condition"/>
+  </select>
+
+  <!--根据条件删除-->
+  <delete id="deleteByQuery">
+  	DELETE FROM
+  		supervision_match
+  	<include refid="query_condition"/>
+  </delete>
+
+  <!--根据条件更新-->
+  <update id="updateByQuery">
+  	UPDATE supervision_match
+  	<set>
+  		<if test="bean.supervisionDuration != null">
+  			supervision_duration = #{bean.supervisionDuration},
+  		</if>
+  		<if test="bean.roomName != null">
+  			room_name = #{bean.roomName},
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time = #{bean.createTime},
+  		</if>
+  	</set>
+  	<include refid="query_condition"/>
+  </update>
+
+  <!--插入(匹配有字段的值)-->
+  <insert id="insert" parameterType="com.greenbox.entity.po.SupervisionMatch">
+  	<selectKey keyProperty="bean.id" resultType="java.lang.Long" order="AFTER">
+  		SELECT LAST_INSERT_ID()
+  	</selectKey>
+  	INSERT INTO supervision_match
+  	<trim prefix="(" suffix=")" suffixOverrides=",">
+  		<if test="bean.id != null">
+  			id,
+  		</if>
+  		<if test="bean.supervisionDuration != null">
+  			supervision_duration,
+  		</if>
+  		<if test="bean.roomName != null">
+  			room_name,
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time,
+  		</if>
+  	</trim>
+  	<trim prefix="values (" suffix=")" suffixOverrides=",">
+  		<if test="bean.id != null">
+  			#{bean.id},
+  		</if>
+  		<if test="bean.supervisionDuration != null">
+  			#{bean.supervisionDuration},
+  		</if>
+  		<if test="bean.roomName != null">
+  			#{bean.roomName},
+  		</if>
+  		<if test="bean.createTime != null">
+  			#{bean.createTime},
+  		</if>
+  	</trim>
+  </insert>
+
+  <!--插入或更新(匹配有值的字段)-->
+  <insert id="insertOrUpdate" parameterType="com.greenbox.entity.po.SupervisionMatch">
+  	INSERT INTO supervision_match
+  	<trim prefix="(" suffix=")" suffixOverrides=",">
+  		<if test="bean.id != null">
+  			id,
+  		</if>
+  		<if test="bean.supervisionDuration != null">
+  			supervision_duration,
+  		</if>
+  		<if test="bean.roomName != null">
+  			room_name,
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time,
+  		</if>
+  	</trim>
+  	<trim prefix="values (" suffix=")" suffixOverrides=",">
+  		<if test="bean.id != null">
+  			#{bean.id},
+  		</if>
+  		<if test="bean.supervisionDuration != null">
+  			#{bean.supervisionDuration},
+  		</if>
+  		<if test="bean.roomName != null">
+  			#{bean.roomName},
+  		</if>
+  		<if test="bean.createTime != null">
+  			#{bean.createTime},
+  		</if>
+  	</trim>
+  	on DUPLICATE KEY update
+  	<trim prefix="" suffix="" suffixOverrides=",">
+  		<if test="bean.supervisionDuration != null">
+  			supervision_duration = VALUES(supervision_duration),
+  		</if>
+  		<if test="bean.roomName != null">
+  			room_name = VALUES(room_name),
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time = VALUES(create_time),
+  		</if>
+  	</trim>
+  </insert>
+
+  <!--批量插入-->
+  <insert id="insertBatch" parameterType="com.greenbox.entity.po.SupervisionMatch">
+  	INSERT INTO supervision_match(supervision_duration,room_name,create_time)values
+  	<foreach collection="list" item="item" separator=",">
+  		(#{item.supervisionDuration},#{item.roomName},#{item.createTime})
+  	</foreach>
+  </insert>
+
+  <!--批量插入或更新-->
+  <insert id="insertOrUpdateBatch" parameterType="com.greenbox.entity.po.SupervisionMatch">
+  	INSERT INTO supervision_match(supervision_duration,room_name,create_time)values
+  	<foreach collection="list" item="item" separator=",">
+  		(#{item.supervisionDuration},#{item.roomName},#{item.createTime})
+  	</foreach>
+  	on DUPLICATE KEY update
+  		supervision_duration = VALUES(supervision_duration),room_name = VALUES(room_name),create_time = VALUES(create_time)
+  </insert>
+
+  <!--根据"id"查询-->
+  <select id="selectById" resultMap="base_result_map">
+  	SELECT <include refid="base_column_list"/> 
+  	  FROM supervision_match
+  	  WHERE id=#{id} 
+  </select>
+
+  <!--根据"id"更新-->
+  <update id="updateById" parameterType="com.greenbox.entity.po.SupervisionMatch">
+  	UPDATE supervision_match
+  	<set>
+  		<if test="bean.supervisionDuration != null">
+  			supervision_duration = #{bean.supervisionDuration},
+  		</if>
+  		<if test="bean.roomName != null">
+  			room_name = #{bean.roomName},
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time = #{bean.createTime},
+  		</if>
+  	</set>
+  	WHERE id=#{id} 
+  </update>
+
+  <!--根据"id"删除-->
+  <delete id="deleteById">
+  	DELETE FROM 
+  	  supervision_match
+  	  WHERE id=#{id} 
+  </delete>
+
+  <!--根据"roomName"查询-->
+  <select id="selectByRoomName" resultMap="base_result_map">
+  	SELECT <include refid="base_column_list"/> 
+  	  FROM supervision_match
+  	  WHERE room_name=#{roomName} 
+  </select>
+
+  <!--根据"roomName"更新-->
+  <update id="updateByRoomName" parameterType="com.greenbox.entity.po.SupervisionMatch">
+  	UPDATE supervision_match
+  	<set>
+  		<if test="bean.supervisionDuration != null">
+  			supervision_duration = #{bean.supervisionDuration},
+  		</if>
+  		<if test="bean.roomName != null">
+  			room_name = #{bean.roomName},
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time = #{bean.createTime},
+  		</if>
+  	</set>
+  	WHERE room_name=#{roomName} 
+  </update>
+
+  <!--根据"roomName"删除-->
+  <delete id="deleteByRoomName">
+  	DELETE FROM 
+  	  supervision_match
+  	  WHERE room_name=#{roomName} 
+  </delete>
+
+</mapper>

@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.greenbox.mappers.BookMapper">
+
+  <!--实体映射-->
+  <resultMap id="base_result_map" type="com.greenbox.entity.po.Book">
+
+  	<!--书籍表主键ID-->
+  	<id column="id" property="id"/>
+
+  	<!--书籍名称-->
+  	<result column="book_name" property="bookName"/>
+
+  	<!--书籍类别（如：英语、小说、工具类等）-->
+  	<result column="category" property="category"/>
+
+  	<!--书籍作者-->
+  	<result column="author" property="author"/>
+
+  	<!--书籍简介-->
+  	<result column="introduction" property="introduction"/>
+
+  	<!--书籍记录创建时间-->
+  	<result column="create_time" property="createTime"/>
+
+
+  </resultMap>
+
+  <!--通用查询列-->
+  <sql id="base_column_list">
+  	id, book_name, category, author, introduction, create_time 
+  </sql>
+
+  <!--基础查询条件-->
+  <sql id="base_query_condition">
+  	<if test="query.id !=null">
+  		and id = #{query.id}
+  	</if>
+  	<if test="query.bookName !=null and query.bookName != ''">
+  		and book_name = #{query.bookName}
+  	</if>
+  	<if test="query.category !=null and query.category != ''">
+  		and category = #{query.category}
+  	</if>
+  	<if test="query.author !=null and query.author != ''">
+  		and author = #{query.author}
+  	</if>
+  	<if test="query.introduction !=null and query.introduction != ''">
+  		and introduction = #{query.introduction}
+  	</if>
+  	<if test="query.createTime !=null">
+  		and create_time = #{query.createTime}
+  	</if>
+  </sql>
+
+  <!--扩展查询条件-->
+  <sql id="base_query_condition_extend">
+  	<if test="query.bookNameFuzzy !=null and query.bookNameFuzzy != ''">
+  		 and book_name like concat('%',#{query.bookNameFuzzy},'%')
+  	</if>
+  	<if test="query.categoryFuzzy !=null and query.categoryFuzzy != ''">
+  		 and category like concat('%',#{query.categoryFuzzy},'%')
+  	</if>
+  	<if test="query.authorFuzzy !=null and query.authorFuzzy != ''">
+  		 and author like concat('%',#{query.authorFuzzy},'%')
+  	</if>
+  	<if test="query.introductionFuzzy !=null and query.introductionFuzzy != ''">
+  		 and introduction like concat('%',#{query.introductionFuzzy},'%')
+  	</if>
+  	<if test="query.createTimeStart !=null and query.createTimeStart != ''">
+  		 <![CDATA[ and create_time>=str_to_date(#{query.createTimeStart}, '%Y-%m-%d') ]]>
+  	</if>
+  	<if test="query.createTimeEnd !=null and query.createTimeEnd != ''">
+  		 <![CDATA[ and create_time < date_sub(str_to_date(#{query.createTimeEnd}, '%Y-%m-%d'), interval - 1 day) ]]>
+  	</if>
+  </sql>
+
+  <!--通用查询条件-->
+  <sql id="query_condition">
+  	<where>
+  		1
+  		<include refid="base_query_condition"/>
+  		<include refid="base_query_condition_extend"/>
+  	</where>
+  </sql>
+
+  <!--查询列表-->
+  <select id="selectList" resultMap="base_result_map">
+  	SELECT <include refid="base_column_list"/> 
+  	FROM book
+  	  <include refid="query_condition"/>
+  	  <if test="query.orderBy != null">order by ${query.orderBy}</if>
+  	  <if test="query.simplePage != null">limit #{query.simplePage.start}, #{query.simplePage.end}</if>
+  </select>
+
+  <!--查询数量-->
+  <select id="selectCount" resultType="java.lang.Integer">
+  	SELECT count(1) 
+  	FROM book
+  	  <include refid="query_condition"/>
+  </select>
+
+  <!--根据条件删除-->
+  <delete id="deleteByQuery">
+  	DELETE FROM
+  		book
+  	<include refid="query_condition"/>
+  </delete>
+
+  <!--根据条件更新-->
+  <update id="updateByQuery">
+  	UPDATE book
+  	<set>
+  		<if test="bean.bookName != null">
+  			book_name = #{bean.bookName},
+  		</if>
+  		<if test="bean.category != null">
+  			category = #{bean.category},
+  		</if>
+  		<if test="bean.author != null">
+  			author = #{bean.author},
+  		</if>
+  		<if test="bean.introduction != null">
+  			introduction = #{bean.introduction},
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time = #{bean.createTime},
+  		</if>
+  	</set>
+  	<include refid="query_condition"/>
+  </update>
+
+  <!--插入(匹配有字段的值)-->
+  <insert id="insert" parameterType="com.greenbox.entity.po.Book">
+  	<selectKey keyProperty="bean.id" resultType="java.lang.Long" order="AFTER">
+  		SELECT LAST_INSERT_ID()
+  	</selectKey>
+  	INSERT INTO book
+  	<trim prefix="(" suffix=")" suffixOverrides=",">
+  		<if test="bean.id != null">
+  			id,
+  		</if>
+  		<if test="bean.bookName != null">
+  			book_name,
+  		</if>
+  		<if test="bean.category != null">
+  			category,
+  		</if>
+  		<if test="bean.author != null">
+  			author,
+  		</if>
+  		<if test="bean.introduction != null">
+  			introduction,
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time,
+  		</if>
+  	</trim>
+  	<trim prefix="values (" suffix=")" suffixOverrides=",">
+  		<if test="bean.id != null">
+  			#{bean.id},
+  		</if>
+  		<if test="bean.bookName != null">
+  			#{bean.bookName},
+  		</if>
+  		<if test="bean.category != null">
+  			#{bean.category},
+  		</if>
+  		<if test="bean.author != null">
+  			#{bean.author},
+  		</if>
+  		<if test="bean.introduction != null">
+  			#{bean.introduction},
+  		</if>
+  		<if test="bean.createTime != null">
+  			#{bean.createTime},
+  		</if>
+  	</trim>
+  </insert>
+
+  <!--插入或更新(匹配有值的字段)-->
+  <insert id="insertOrUpdate" parameterType="com.greenbox.entity.po.Book">
+  	INSERT INTO book
+  	<trim prefix="(" suffix=")" suffixOverrides=",">
+  		<if test="bean.id != null">
+  			id,
+  		</if>
+  		<if test="bean.bookName != null">
+  			book_name,
+  		</if>
+  		<if test="bean.category != null">
+  			category,
+  		</if>
+  		<if test="bean.author != null">
+  			author,
+  		</if>
+  		<if test="bean.introduction != null">
+  			introduction,
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time,
+  		</if>
+  	</trim>
+  	<trim prefix="values (" suffix=")" suffixOverrides=",">
+  		<if test="bean.id != null">
+  			#{bean.id},
+  		</if>
+  		<if test="bean.bookName != null">
+  			#{bean.bookName},
+  		</if>
+  		<if test="bean.category != null">
+  			#{bean.category},
+  		</if>
+  		<if test="bean.author != null">
+  			#{bean.author},
+  		</if>
+  		<if test="bean.introduction != null">
+  			#{bean.introduction},
+  		</if>
+  		<if test="bean.createTime != null">
+  			#{bean.createTime},
+  		</if>
+  	</trim>
+  	on DUPLICATE KEY update
+  	<trim prefix="" suffix="" suffixOverrides=",">
+  		<if test="bean.bookName != null">
+  			book_name = VALUES(book_name),
+  		</if>
+  		<if test="bean.category != null">
+  			category = VALUES(category),
+  		</if>
+  		<if test="bean.author != null">
+  			author = VALUES(author),
+  		</if>
+  		<if test="bean.introduction != null">
+  			introduction = VALUES(introduction),
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time = VALUES(create_time),
+  		</if>
+  	</trim>
+  </insert>
+
+  <!--批量插入-->
+  <insert id="insertBatch" parameterType="com.greenbox.entity.po.Book">
+  	INSERT INTO book(book_name,category,author,introduction,create_time)values
+  	<foreach collection="list" item="item" separator=",">
+  		(#{item.bookName},#{item.category},#{item.author},#{item.introduction},#{item.createTime})
+  	</foreach>
+  </insert>
+
+  <!--批量插入或更新-->
+  <insert id="insertOrUpdateBatch" parameterType="com.greenbox.entity.po.Book">
+  	INSERT INTO book(book_name,category,author,introduction,create_time)values
+  	<foreach collection="list" item="item" separator=",">
+  		(#{item.bookName},#{item.category},#{item.author},#{item.introduction},#{item.createTime})
+  	</foreach>
+  	on DUPLICATE KEY update
+  		book_name = VALUES(book_name),category = VALUES(category),author = VALUES(author),introduction = VALUES(introduction),create_time = VALUES(create_time)
+  </insert>
+
+  <!--根据"id"查询-->
+  <select id="selectById" resultMap="base_result_map">
+  	SELECT <include refid="base_column_list"/> 
+  	  FROM book
+  	  WHERE id=#{id} 
+  </select>
+
+  <!--根据"id"更新-->
+  <update id="updateById" parameterType="com.greenbox.entity.po.Book">
+  	UPDATE book
+  	<set>
+  		<if test="bean.bookName != null">
+  			book_name = #{bean.bookName},
+  		</if>
+  		<if test="bean.category != null">
+  			category = #{bean.category},
+  		</if>
+  		<if test="bean.author != null">
+  			author = #{bean.author},
+  		</if>
+  		<if test="bean.introduction != null">
+  			introduction = #{bean.introduction},
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time = #{bean.createTime},
+  		</if>
+  	</set>
+  	WHERE id=#{id} 
+  </update>
+
+  <!--根据"id"删除-->
+  <delete id="deleteById">
+  	DELETE FROM 
+  	  book
+  	  WHERE id=#{id} 
+  </delete>
+
+</mapper>
