@@ -9,3 +9,5 @@
 /dataSources/
 /dataSources.local.xml
 /.idea/
+/target/
+/log.path_IS_UNDEFINED/
