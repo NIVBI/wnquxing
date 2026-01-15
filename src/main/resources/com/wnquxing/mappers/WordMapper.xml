@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.greenbox.mappers.WordMapper">
+
+  <!--实体映射-->
+  <resultMap id="base_result_map" type="com.wnquxing.entity.po.Word">
+
+  	<!--单词表主键ID-->
+  	<id column="id" property="id"/>
+
+  	<!--单词汉语释义-->
+  	<result column="chinese" property="chinese"/>
+
+  	<!--英语单词-->
+  	<result column="english" property="english"/>
+
+  	<!--单词音标-->
+  	<result column="phonetic_symbol" property="phoneticSymbol"/>
+
+  	<!--例句-->
+  	<result column="example_sentence" property="exampleSentence"/>
+
+  	<!--单词记录创建时间-->
+  	<result column="create_time" property="createTime"/>
+
+
+  </resultMap>
+
+  <!--通用查询列-->
+  <sql id="base_column_list">
+  	id, chinese, english, phonetic_symbol, example_sentence, create_time 
+  </sql>
+
+  <!--基础查询条件-->
+  <sql id="base_query_condition">
+  	<if test="query.id !=null">
+  		and id = #{query.id}
+  	</if>
+  	<if test="query.chinese !=null and query.chinese != ''">
+  		and chinese = #{query.chinese}
+  	</if>
+  	<if test="query.english !=null and query.english != ''">
+  		and english = #{query.english}
+  	</if>
+  	<if test="query.phoneticSymbol !=null and query.phoneticSymbol != ''">
+  		and phonetic_symbol = #{query.phoneticSymbol}
+  	</if>
+  	<if test="query.exampleSentence !=null and query.exampleSentence != ''">
+  		and example_sentence = #{query.exampleSentence}
+  	</if>
+  	<if test="query.createTime !=null">
+  		and create_time = #{query.createTime}
+  	</if>
+  </sql>
+
+  <!--扩展查询条件-->
+  <sql id="base_query_condition_extend">
+  	<if test="query.chineseFuzzy !=null and query.chineseFuzzy != ''">
+  		 and chinese like concat('%',#{query.chineseFuzzy},'%')
+  	</if>
+  	<if test="query.englishFuzzy !=null and query.englishFuzzy != ''">
+  		 and english like concat('%',#{query.englishFuzzy},'%')
+  	</if>
+  	<if test="query.phoneticSymbolFuzzy !=null and query.phoneticSymbolFuzzy != ''">
+  		 and phonetic_symbol like concat('%',#{query.phoneticSymbolFuzzy},'%')
+  	</if>
+  	<if test="query.exampleSentenceFuzzy !=null and query.exampleSentenceFuzzy != ''">
+  		 and example_sentence like concat('%',#{query.exampleSentenceFuzzy},'%')
+  	</if>
+  	<if test="query.createTimeStart !=null and query.createTimeStart != ''">
+  		 <![CDATA[ and create_time>=str_to_date(#{query.createTimeStart}, '%Y-%m-%d') ]]>
+  	</if>
+  	<if test="query.createTimeEnd !=null and query.createTimeEnd != ''">
+  		 <![CDATA[ and create_time < date_sub(str_to_date(#{query.createTimeEnd}, '%Y-%m-%d'), interval - 1 day) ]]>
+  	</if>
+  </sql>
+
+  <!--通用查询条件-->
+  <sql id="query_condition">
+  	<where>
+  		1
+  		<include refid="base_query_condition"/>
+  		<include refid="base_query_condition_extend"/>
+  	</where>
+  </sql>
+
+  <!--查询列表-->
+  <select id="selectList" resultMap="base_result_map">
+  	SELECT <include refid="base_column_list"/> 
+  	FROM word
+  	  <include refid="query_condition"/>
+  	  <if test="query.orderBy != null">order by ${query.orderBy}</if>
+  	  <if test="query.simplePage != null">limit #{query.simplePage.start}, #{query.simplePage.end}</if>
+  </select>
+
+  <!--查询数量-->
+  <select id="selectCount" resultType="java.lang.Integer">
+  	SELECT count(1) 
+  	FROM word
+  	  <include refid="query_condition"/>
+  </select>
+
+  <!--根据条件删除-->
+  <delete id="deleteByQuery">
+  	DELETE FROM
+  		word
+  	<include refid="query_condition"/>
+  </delete>
+
+  <!--根据条件更新-->
+  <update id="updateByQuery">
+  	UPDATE word
+  	<set>
+  		<if test="bean.chinese != null">
+  			chinese = #{bean.chinese},
+  		</if>
+  		<if test="bean.english != null">
+  			english = #{bean.english},
+  		</if>
+  		<if test="bean.phoneticSymbol != null">
+  			phonetic_symbol = #{bean.phoneticSymbol},
+  		</if>
+  		<if test="bean.exampleSentence != null">
+  			example_sentence = #{bean.exampleSentence},
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time = #{bean.createTime},
+  		</if>
+  	</set>
+  	<include refid="query_condition"/>
+  </update>
+
+  <!--插入(匹配有字段的值)-->
+  <insert id="insert" parameterType="com.wnquxing.entity.po.Word">
+  	<selectKey keyProperty="bean.id" resultType="java.lang.Long" order="AFTER">
+  		SELECT LAST_INSERT_ID()
+  	</selectKey>
+  	INSERT INTO word
+  	<trim prefix="(" suffix=")" suffixOverrides=",">
+  		<if test="bean.id != null">
+  			id,
+  		</if>
+  		<if test="bean.chinese != null">
+  			chinese,
+  		</if>
+  		<if test="bean.english != null">
+  			english,
+  		</if>
+  		<if test="bean.phoneticSymbol != null">
+  			phonetic_symbol,
+  		</if>
+  		<if test="bean.exampleSentence != null">
+  			example_sentence,
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time,
+  		</if>
+  	</trim>
+  	<trim prefix="values (" suffix=")" suffixOverrides=",">
+  		<if test="bean.id != null">
+  			#{bean.id},
+  		</if>
+  		<if test="bean.chinese != null">
+  			#{bean.chinese},
+  		</if>
+  		<if test="bean.english != null">
+  			#{bean.english},
+  		</if>
+  		<if test="bean.phoneticSymbol != null">
+  			#{bean.phoneticSymbol},
+  		</if>
+  		<if test="bean.exampleSentence != null">
+  			#{bean.exampleSentence},
+  		</if>
+  		<if test="bean.createTime != null">
+  			#{bean.createTime},
+  		</if>
+  	</trim>
+  </insert>
+
+  <!--插入或更新(匹配有值的字段)-->
+  <insert id="insertOrUpdate" parameterType="com.wnquxing.entity.po.Word">
+  	INSERT INTO word
+  	<trim prefix="(" suffix=")" suffixOverrides=",">
+  		<if test="bean.id != null">
+  			id,
+  		</if>
+  		<if test="bean.chinese != null">
+  			chinese,
+  		</if>
+  		<if test="bean.english != null">
+  			english,
+  		</if>
+  		<if test="bean.phoneticSymbol != null">
+  			phonetic_symbol,
+  		</if>
+  		<if test="bean.exampleSentence != null">
+  			example_sentence,
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time,
+  		</if>
+  	</trim>
+  	<trim prefix="values (" suffix=")" suffixOverrides=",">
+  		<if test="bean.id != null">
+  			#{bean.id},
+  		</if>
+  		<if test="bean.chinese != null">
+  			#{bean.chinese},
+  		</if>
+  		<if test="bean.english != null">
+  			#{bean.english},
+  		</if>
+  		<if test="bean.phoneticSymbol != null">
+  			#{bean.phoneticSymbol},
+  		</if>
+  		<if test="bean.exampleSentence != null">
+  			#{bean.exampleSentence},
+  		</if>
+  		<if test="bean.createTime != null">
+  			#{bean.createTime},
+  		</if>
+  	</trim>
+  	on DUPLICATE KEY update
+  	<trim prefix="" suffix="" suffixOverrides=",">
+  		<if test="bean.chinese != null">
+  			chinese = VALUES(chinese),
+  		</if>
+  		<if test="bean.english != null">
+  			english = VALUES(english),
+  		</if>
+  		<if test="bean.phoneticSymbol != null">
+  			phonetic_symbol = VALUES(phonetic_symbol),
+  		</if>
+  		<if test="bean.exampleSentence != null">
+  			example_sentence = VALUES(example_sentence),
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time = VALUES(create_time),
+  		</if>
+  	</trim>
+  </insert>
+
+  <!--批量插入-->
+  <insert id="insertBatch" parameterType="com.wnquxing.entity.po.Word">
+  	INSERT INTO word(chinese,english,phonetic_symbol,example_sentence,create_time)values
+  	<foreach collection="list" item="item" separator=",">
+  		(#{item.chinese},#{item.english},#{item.phoneticSymbol},#{item.exampleSentence},#{item.createTime})
+  	</foreach>
+  </insert>
+
+  <!--批量插入或更新-->
+  <insert id="insertOrUpdateBatch" parameterType="com.wnquxing.entity.po.Word">
+  	INSERT INTO word(chinese,english,phonetic_symbol,example_sentence,create_time)values
+  	<foreach collection="list" item="item" separator=",">
+  		(#{item.chinese},#{item.english},#{item.phoneticSymbol},#{item.exampleSentence},#{item.createTime})
+  	</foreach>
+  	on DUPLICATE KEY update
+  		chinese = VALUES(chinese),english = VALUES(english),phonetic_symbol = VALUES(phonetic_symbol),example_sentence = VALUES(example_sentence),create_time = VALUES(create_time)
+  </insert>
+
+  <!--根据"id"查询-->
+  <select id="selectById" resultMap="base_result_map">
+  	SELECT <include refid="base_column_list"/> 
+  	  FROM word
+  	  WHERE id=#{id} 
+  </select>
+
+  <!--根据"id"更新-->
+  <update id="updateById" parameterType="com.wnquxing.entity.po.Word">
+  	UPDATE word
+  	<set>
+  		<if test="bean.chinese != null">
+  			chinese = #{bean.chinese},
+  		</if>
+  		<if test="bean.english != null">
+  			english = #{bean.english},
+  		</if>
+  		<if test="bean.phoneticSymbol != null">
+  			phonetic_symbol = #{bean.phoneticSymbol},
+  		</if>
+  		<if test="bean.exampleSentence != null">
+  			example_sentence = #{bean.exampleSentence},
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time = #{bean.createTime},
+  		</if>
+  	</set>
+  	WHERE id=#{id} 
+  </update>
+
+  <!--根据"id"删除-->
+  <delete id="deleteById">
+  	DELETE FROM 
+  	  word
+  	  WHERE id=#{id} 
+  </delete>
+
+  <!--根据"english"查询-->
+  <select id="selectByEnglish" resultMap="base_result_map">
+  	SELECT <include refid="base_column_list"/> 
+  	  FROM word
+  	  WHERE english=#{english} 
+  </select>
+
+  <!--根据"english"更新-->
+  <update id="updateByEnglish" parameterType="com.wnquxing.entity.po.Word">
+  	UPDATE word
+  	<set>
+  		<if test="bean.chinese != null">
+  			chinese = #{bean.chinese},
+  		</if>
+  		<if test="bean.english != null">
+  			english = #{bean.english},
+  		</if>
+  		<if test="bean.phoneticSymbol != null">
+  			phonetic_symbol = #{bean.phoneticSymbol},
+  		</if>
+  		<if test="bean.exampleSentence != null">
+  			example_sentence = #{bean.exampleSentence},
+  		</if>
+  		<if test="bean.createTime != null">
+  			create_time = #{bean.createTime},
+  		</if>
+  	</set>
+  	WHERE english=#{english} 
+  </update>
+
+  <!--根据"english"删除-->
+  <delete id="deleteByEnglish">
+  	DELETE FROM 
+  	  word
+  	  WHERE english=#{english} 
+  </delete>
+
+</mapper>
