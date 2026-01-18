@@ -94,4 +94,8 @@ public class StringUtils {
         content = content.replace("\n","<br>" );
         return content;
     }
+
+    public static String getUserId() {
+        return getRandomNumber(10);
+    }
 }

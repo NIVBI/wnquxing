@@ -12,10 +12,8 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.wnquxing.utils.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 
@@ -46,13 +44,8 @@ public class UserController extends ABaseController{
 	 * @Description: 注册
 	 */
   @RequestMapping("register")
-  public ResponseVO register(User bean){
+  public ResponseVO register(@ModelAttribute User bean){
 	  // 1. 参数非空校验
-	  if (bean.getUserId() == null || bean.getUserId().trim().isEmpty()) {
-		  BusinessException e = new BusinessException(ResponseCodeEnum.CODE_600);
-		  e.setMessage("用户标识不能为空");
-		  return getBusinessErrorResponseVO(e, "注册失败");
-	  }
 	  if (bean.getPassword() == null || bean.getPassword().trim().isEmpty() || bean.getPassword().length() < 6) {
 		  BusinessException e = new BusinessException(ResponseCodeEnum.CODE_600);
 		  e.setMessage("密码不能为空且长度不能少于6位");
@@ -77,12 +70,13 @@ public class UserController extends ABaseController{
 	  }
 
 	  // 3. 密码加密（示例：MD5，可替换为SHA256+盐值）
-	  bean.setPassword(org.apache.commons.codec.digest.DigestUtils.md5Hex(bean.getPassword().trim()));
+		bean.setPassword(StringUtils.encodeMd5(bean.getPassword()));
 
 	  // 4. 自动填充创建时间
 	  bean.setCreateTime(new Date());
 
 	  // 5. 调用原有新增方法
+		bean.setUserId(StringUtils.getUserId());
 	  userService.add(bean);
 	  return getSuccessResponseVO("注册成功");
   }
@@ -90,7 +84,7 @@ public class UserController extends ABaseController{
 	 * @Description: 用户登录
 	 */
 	@PostMapping("login")
-	public ResponseVO login(@RequestBody @Valid UserQuery loginQuery) {
+	public ResponseVO login(@ModelAttribute UserQuery loginQuery) {
 		// 1. 参数非空校验
 		if (loginQuery.getUserId() == null || loginQuery.getUserId().trim().isEmpty()) {
 			BusinessException e = new BusinessException("用户标识不能为空");
@@ -112,7 +106,7 @@ public class UserController extends ABaseController{
 		}
 
 		// 3. 密码校验（MD5加密后对比）
-		String encryptPwd = org.apache.commons.codec.digest.DigestUtils.md5Hex(loginQuery.getPassword().trim());
+		String encryptPwd = StringUtils.encodeMd5(loginQuery.getPassword());
 		if (!encryptPwd.equals(dbUser.getPassword())) {
 			BusinessException e = new BusinessException("密码错误");
 			e.setCode(ResponseCodeEnum.CODE_600.getCode());
