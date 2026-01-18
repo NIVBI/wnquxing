@@ -129,6 +129,12 @@
             <artifactId>easy-captcha</artifactId>
             <version>${captcha.verion}</version>
         </dependency>
+        <!-- 注册-->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.15</version>
+        </dependency>
 
 
 

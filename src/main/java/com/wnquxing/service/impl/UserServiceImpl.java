@@ -8,8 +8,11 @@ import com.wnquxing.entity.query.UserQuery;
 import com.wnquxing.entity.vo.PaginationResultVO;
 import com.wnquxing.service.UserService;
 
+import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
+
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -174,5 +177,38 @@ public class UserServiceImpl implements UserService{
   public Integer deleteByEmail(String email){
   	return this.userMapper.deleteByEmail(email);
   }
+
+	/**
+	 * @Description: 用户注册
+	 */
+	@Override
+	public Integer register(User user) {
+		// 1. 密码加密（MD5，与Controller层逻辑保持一致）
+		user.setPassword(DigestUtils.md5Hex(user.getPassword().trim()));
+		// 2. 填充创建时间
+		user.setCreateTime(new Date());
+		// 3. 调用新增方法
+		return this.add(user);
+	}
+
+	/**
+	 * @Description: 用户登录
+	 */
+	@Override
+	public User login(UserQuery loginQuery) {
+		// 1. 根据用户标识查询用户
+		User dbUser = this.getByUserId(loginQuery.getUserId());
+		if (dbUser == null) {
+			return null;
+		}
+		// 2. 密码加密后对比
+		String encryptPwd = DigestUtils.md5Hex(loginQuery.getPassword().trim());
+		if (!encryptPwd.equals(dbUser.getPassword())) {
+			return null;
+		}
+		// 3. 隐藏密码后返回
+		dbUser.setPassword(null);
+		return dbUser;
+	}
 
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.greenbox.mappers.UserMapper">
+<mapper namespace="com.wnquxing.mappers.UserMapper">
 
   <!--实体映射-->
   <resultMap id="base_result_map" type="com.wnquxing.entity.po.User">
@@ -335,5 +335,15 @@
   	  user
   	  WHERE email=#{email} 
   </delete>
+
+	<!-- 根据userId查询用户 -->
+	<select id="getByUserId" parameterType="String" resultMap="base_result_map">
+		SELECT * FROM t_user WHERE user_id = #{userId} LIMIT 1
+	</select>
+
+	<!-- 根据email查询用户 -->
+	<select id="getByEmail" parameterType="String" resultMap="base_result_map">
+		SELECT * FROM t_user WHERE email = #{email} LIMIT 1
+	</select>
 
 </mapper>

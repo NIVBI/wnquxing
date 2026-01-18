@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.greenbox.mappers.SupervisionMatchMapper">
+<mapper namespace="com.wnquxing.mappers.SupervisionMatchMapper">
 
   <!--实体映射-->
   <resultMap id="base_result_map" type="com.wnquxing.entity.po.SupervisionMatch">

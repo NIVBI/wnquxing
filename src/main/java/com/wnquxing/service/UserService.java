@@ -101,5 +101,14 @@ public interface UserService{
 	 * @Description: 根据Email删除
 	 */
   Integer deleteByEmail(String email);
+	/**
+	 * @Description: 用户注册
+	 */
+	Integer register(User user);
+
+	/**
+	 * @Description: 用户登录
+	 */
+	User login(UserQuery loginQuery);
 
 }

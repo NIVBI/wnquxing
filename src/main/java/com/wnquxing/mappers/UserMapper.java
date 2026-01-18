@@ -1,5 +1,6 @@
 package com.wnquxing.mappers;
 
+import com.wnquxing.entity.po.User;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -57,5 +58,17 @@ public interface UserMapper<User,P> extends BaseMapper{
 	 * @Description: 根据Email删除
 	 */
   Integer deleteByEmail(@Param("email") String email);
+
+	/**
+	 * 根据用户唯一标识（userId）查询用户
+	 * 对接Controller中register/ login的唯一性校验&用户查询逻辑
+	 */
+	User getByUserId(@Param("userId") String userId);
+
+	/**
+	 * 根据邮箱查询用户
+	 * 对接Controller中register的邮箱唯一性校验逻辑
+	 */
+	User getByEmail(@Param("email") String email);
 
 }
