@@ -4,12 +4,12 @@ import com.wnquxing.entity.po.Task;
 import com.wnquxing.entity.query.TaskQuery;
 import com.wnquxing.entity.vo.ResponseVO;
 import com.wnquxing.service.TaskService;
-import com.wnquxing.entity.query.TaskRemindExtQuery;
 
 import java.util.*;
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -87,17 +87,26 @@ public class TaskController extends ABaseController{
 
 
 	/**
-	 * @Description: 创建任务
+	 * @Description: 创建任务（创建时状态为进行中，并发送提醒）
 	 */
 	@RequestMapping("createTask")
-	public ResponseVO createTask(String userId, String taskType, String personalGoal, Integer completionStatus, Integer continuousDays){
+	public ResponseVO createTask(@RequestParam String userId, String taskType, String personalGoal, Integer continuousDays){
 		Task bean = new Task();
 		bean.setUserId(userId);
 		bean.setTaskType(taskType);
 		bean.setPersonalGoal(personalGoal);
-		bean.setCompletionStatus(completionStatus != null ? completionStatus : 0);
+		bean.setCompletionStatus(1); // 创建时状态设为"进行中"
 		bean.setContinuousDays(continuousDays != null ? continuousDays : 0);
+		bean.setCreateTime(new Date());
+
+		// 1. 先添加任务
 		this.taskService.add(bean);
+
+		// 2. 如果任务创建成功，立即发送任务提醒
+		if (bean.getId() != null) {
+			this.taskService.sendTaskRemind(bean.getId());
+		}
+
 		return getSuccessResponseVO(null);
 	}
 
