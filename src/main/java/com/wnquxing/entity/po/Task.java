@@ -34,7 +34,7 @@ public class Task implements Serializable{
   private String taskType;
 
 	/**
-	 * @Description: 完成情况（0-未完成，1-已完成）
+	 * @Description: 完成情况（0 "未开始"，1 "进行中" ，2, "已完成"）
 	 */
   private Integer completionStatus;
 

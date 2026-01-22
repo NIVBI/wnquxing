@@ -8,6 +8,7 @@ import com.wnquxing.entity.query.TaskQuery;
 import com.wnquxing.entity.vo.PaginationResultVO;
 import com.wnquxing.service.TaskService;
 
+import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
 import org.slf4j.Logger;
@@ -127,4 +128,39 @@ public class TaskServiceImpl implements TaskService{
   	return this.taskMapper.deleteById(id);
   }
 
+	@Override
+	public Integer quickAdd(String userId, String taskType, String personalGoal){
+		Task bean = new Task();
+		bean.setUserId(userId);
+		bean.setTaskType(taskType);
+		bean.setPersonalGoal(personalGoal);
+		bean.setCompletionStatus(0);
+		bean.setContinuousDays(0);
+		bean.setCreateTime(new Date());
+		return this.taskMapper.insert(bean);
+	}
+
+	@Override
+	public Integer addWithStatus(String userId, String taskType, Integer completionStatus, String personalGoal){
+		Task bean = new Task();
+		bean.setUserId(userId);
+		bean.setTaskType(taskType);
+		bean.setCompletionStatus(completionStatus);
+		bean.setPersonalGoal(personalGoal);
+		bean.setContinuousDays(0);
+		bean.setCreateTime(new Date());
+		return this.taskMapper.insert(bean);
+	}
+
+	@Override
+	public Integer addDailyTask(String userId, String taskType, String personalGoal){
+		Task bean = new Task();
+		bean.setUserId(userId);
+		bean.setTaskType(taskType);
+		bean.setPersonalGoal(personalGoal);
+		bean.setCompletionStatus(0);
+		bean.setContinuousDays(0);
+		bean.setCreateTime(new Date());
+		return this.taskMapper.insert(bean);
+	}
 }

@@ -71,5 +71,19 @@ public interface TaskService{
 	 * @Description: 根据Id删除
 	 */
   Integer deleteById(Long id);
+	/**
+	 * @Description: 快速创建任务
+	 */
+	Integer quickAdd(String userId, String taskType, String personalGoal);
+
+	/**
+	 * @Description: 创建带状态的任务
+	 */
+	Integer addWithStatus(String userId, String taskType, Integer completionStatus, String personalGoal);
+
+	/**
+	 * @Description: 创建每日任务
+	 */
+	Integer addDailyTask(String userId, String taskType, String personalGoal);
 
 }
