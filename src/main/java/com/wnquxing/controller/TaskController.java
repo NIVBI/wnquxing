@@ -90,7 +90,7 @@ public class TaskController extends ABaseController{
 	 * @Description: 创建任务（创建时状态为进行中，并发送提醒）
 	 */
 	@RequestMapping("createTask")
-	public ResponseVO createTask(@RequestParam String userId, String taskType, String personalGoal, Integer continuousDays){
+	public ResponseVO createTask(@RequestParam String userId, @RequestParam String taskType, @RequestParam String personalGoal, @RequestParam Integer continuousDays){
 		Task bean = new Task();
 		bean.setUserId(userId);
 		bean.setTaskType(taskType);
@@ -102,10 +102,10 @@ public class TaskController extends ABaseController{
 		// 1. 先添加任务
 		this.taskService.add(bean);
 
-		// 2. 如果任务创建成功，立即发送任务提醒
-		if (bean.getId() != null) {
-			this.taskService.sendTaskRemind(bean.getId());
-		}
+//		// 2. 如果任务创建成功，立即发送任务提醒
+//		if (bean.getId() != null) {
+//			this.taskService.sendTaskRemind(bean.getId());
+//		}
 
 		return getSuccessResponseVO(null);
 	}

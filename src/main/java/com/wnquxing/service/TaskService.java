@@ -73,15 +73,6 @@ public interface TaskService{
   Integer deleteById(Long id);
 
 
-	/**
-	 * @Description: 获取需要提醒的任务（基于创建时间和状态）
-	 */
-	List<Task> getNeedRemindTasks();
 
-
-	/**
-	 * @Description: 发送任务提醒
-	 */
-	void sendTaskRemind(Long taskId);
 
 }
