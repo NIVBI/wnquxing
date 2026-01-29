@@ -16,6 +16,7 @@ public class AppConfig {
     }
 
 
+
     public Integer getWsPort() {
         return wsPort;
     }
