@@ -15,6 +15,7 @@ public class AppConfig {
         return adminEmail.equals(email);
     }
 
+
     public Integer getWsPort() {
         return wsPort;
     }
