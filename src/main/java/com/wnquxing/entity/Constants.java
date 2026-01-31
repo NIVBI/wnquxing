@@ -19,4 +19,9 @@ public class Constants {
     public static final Integer LENGTH_9 = 9;
     public static final Integer LENGTH_7 = 7;
 
+    // 新增：任务提醒相关Redis key
+    public static final String REDIS_KEY_TASK_REMINDER = "task_reminder:";
+    public static final String REDIS_KEY_TASK_DAILY_REMINDER = "task_daily_reminder:";
+
+
 }

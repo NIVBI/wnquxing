@@ -9,6 +9,8 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Component("redisUtils")
@@ -126,5 +128,46 @@ public class RedisUtils<V> {
             e.printStackTrace();
             return false;
         }
+    }
+    /**
+     * 新增：设置哈希表值
+     */
+    public void hset(String key, String field, V value) {
+        redisTemplate.opsForHash().put(key, field, value);
+    }
+
+    /**
+     * 新增：获取哈希表值
+     */
+    public V hget(String key, String field) {
+        return (V) redisTemplate.opsForHash().get(key, field);
+    }
+
+    /**
+     * 新增：获取哈希表所有字段和值
+     */
+    public Map<Object, Object> hgetAll(String key) {
+        return redisTemplate.opsForHash().entries(key);
+    }
+
+    /**
+     * 新增：删除哈希表字段
+     */
+    public Long hdelete(String key, String... fields) {
+        return redisTemplate.opsForHash().delete(key, (Object[]) fields);
+    }
+
+    /**
+     * 新增：检查哈希表字段是否存在
+     */
+    public Boolean hexists(String key, String field) {
+        return redisTemplate.opsForHash().hasKey(key, field);
+    }
+
+    /**
+     * 新增：获取所有匹配的key
+     */
+    public Set<String> keys(String pattern) {
+        return redisTemplate.keys(pattern);
     }
 }
