@@ -41,4 +41,5 @@ public enum TaskTypeEnum {
     public static boolean isValidType(Integer type) {
         return getByType(type) != null;
     }
+
 }
