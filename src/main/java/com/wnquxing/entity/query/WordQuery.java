@@ -1,154 +1,217 @@
 package com.wnquxing.entity.query;
 
 import java.util.Date;
+import java.util.List;
 
 /**
- * 
  * @Auther:关山越
- * 
  * @Description:单词信息表
- * 
  * @Date:2026-01-12
- * 
  */
 public class WordQuery extends BaseQuery{
 
-	/**
-	 * @Description: 单词表主键ID
-	 */
-  private Long id;
+    /**
+     * @Description: 单词表主键ID
+     */
+    private Long id;
 
-	/**
-	 * @Description: 单词汉语释义
-	 */
-  private String chinese;
+    /**
+     * @Description: 单词汉语释义
+     */
+    private String chinese;
 
-	/**
-	 * @Description: 英语单词
-	 */
-  private String english;
+    /**
+     * @Description: 英语单词
+     */
+    private String english;
 
-	/**
-	 * @Description: 单词音标
-	 */
-  private String phoneticSymbol;
+    /**
+     * @Description: 单词音标
+     */
+    private String phoneticSymbol;
 
-	/**
-	 * @Description: 例句
-	 */
-  private String exampleSentence;
+    /**
+     * @Description: 例句
+     */
+    private String exampleSentence;
 
-	/**
-	 * @Description: 单词记录创建时间
-	 */
-  private Date createTime;
+    /**
+     * @Description: 单词等级（0:初中, 1:高中, 2:四级, 3:六级, 4:考研）
+     */
+    private Integer wordLevel;
 
-  private String chineseFuzzy;
+    /**
+     * @Description: 单词记录创建时间
+     */
+    private Date createTime;
 
-  private String englishFuzzy;
+    private String chineseFuzzy;
 
-  private String phoneticSymbolFuzzy;
+    private String englishFuzzy;
 
-  private String exampleSentenceFuzzy;
+    private String phoneticSymbolFuzzy;
 
-  private String createTimeStart;
+    private String exampleSentenceFuzzy;
 
-  private String createTimeEnd;
+    private String createTimeStart;
 
-  public Long getId(){
-  	return id;
-  }
+    private String createTimeEnd;
 
-  public void setId(Long id){
-  	this.id = id;
-  }
+    // 新增字段用于单词推送功能
 
-  public String getChinese(){
-  	return chinese;
-  }
+    /**
+     * @Description: 单词等级列表（用于多级别查询）
+     */
+    private List<Integer> wordLevelList;
 
-  public void setChinese(String chinese){
-  	this.chinese = chinese;
-  }
+    /**
+     * @Description: 排除已学习的单词ID列表
+     */
+    private List<Long> excludeWordIds;
 
-  public String getEnglish(){
-  	return english;
-  }
+    /**
+     * @Description: 是否随机排序
+     */
+    private Boolean randomOrder;
 
-  public void setEnglish(String english){
-  	this.english = english;
-  }
+    /**
+     * @Description: 推送数量限制
+     */
+    private Integer limitCount;
 
-  public String getPhoneticSymbol(){
-  	return phoneticSymbol;
-  }
+    public Long getId(){
+        return id;
+    }
 
-  public void setPhoneticSymbol(String phoneticSymbol){
-  	this.phoneticSymbol = phoneticSymbol;
-  }
+    public void setId(Long id){
+        this.id = id;
+    }
 
-  public String getExampleSentence(){
-  	return exampleSentence;
-  }
+    public String getChinese(){
+        return chinese;
+    }
 
-  public void setExampleSentence(String exampleSentence){
-  	this.exampleSentence = exampleSentence;
-  }
+    public void setChinese(String chinese){
+        this.chinese = chinese;
+    }
 
-  public Date getCreateTime(){
-  	return createTime;
-  }
+    public String getEnglish(){
+        return english;
+    }
 
-  public void setCreateTime(Date createTime){
-  	this.createTime = createTime;
-  }
+    public void setEnglish(String english){
+        this.english = english;
+    }
 
-  public String getChineseFuzzy(){
-  	return chineseFuzzy;
-  }
+    public String getPhoneticSymbol(){
+        return phoneticSymbol;
+    }
 
-  public void setChineseFuzzy(String chineseFuzzy){
-  	this.chineseFuzzy = chineseFuzzy;
-  }
+    public void setPhoneticSymbol(String phoneticSymbol){
+        this.phoneticSymbol = phoneticSymbol;
+    }
 
-  public String getEnglishFuzzy(){
-  	return englishFuzzy;
-  }
+    public String getExampleSentence(){
+        return exampleSentence;
+    }
 
-  public void setEnglishFuzzy(String englishFuzzy){
-  	this.englishFuzzy = englishFuzzy;
-  }
+    public void setExampleSentence(String exampleSentence){
+        this.exampleSentence = exampleSentence;
+    }
 
-  public String getPhoneticSymbolFuzzy(){
-  	return phoneticSymbolFuzzy;
-  }
+    public Integer getWordLevel(){
+        return wordLevel;
+    }
 
-  public void setPhoneticSymbolFuzzy(String phoneticSymbolFuzzy){
-  	this.phoneticSymbolFuzzy = phoneticSymbolFuzzy;
-  }
+    public void setWordLevel(Integer wordLevel){
+        this.wordLevel = wordLevel;
+    }
 
-  public String getExampleSentenceFuzzy(){
-  	return exampleSentenceFuzzy;
-  }
+    public Date getCreateTime(){
+        return createTime;
+    }
 
-  public void setExampleSentenceFuzzy(String exampleSentenceFuzzy){
-  	this.exampleSentenceFuzzy = exampleSentenceFuzzy;
-  }
+    public void setCreateTime(Date createTime){
+        this.createTime = createTime;
+    }
 
-  public String getCreateTimeStart(){
-  	return createTimeStart;
-  }
+    public String getChineseFuzzy(){
+        return chineseFuzzy;
+    }
 
-  public void setCreateTimeStart(String createTimeStart){
-  	this.createTimeStart = createTimeStart;
-  }
+    public void setChineseFuzzy(String chineseFuzzy){
+        this.chineseFuzzy = chineseFuzzy;
+    }
 
-  public String getCreateTimeEnd(){
-  	return createTimeEnd;
-  }
+    public String getEnglishFuzzy(){
+        return englishFuzzy;
+    }
 
-  public void setCreateTimeEnd(String createTimeEnd){
-  	this.createTimeEnd = createTimeEnd;
-  }
+    public void setEnglishFuzzy(String englishFuzzy){
+        this.englishFuzzy = englishFuzzy;
+    }
 
+    public String getPhoneticSymbolFuzzy(){
+        return phoneticSymbolFuzzy;
+    }
+
+    public void setPhoneticSymbolFuzzy(String phoneticSymbolFuzzy){
+        this.phoneticSymbolFuzzy = phoneticSymbolFuzzy;
+    }
+
+    public String getExampleSentenceFuzzy(){
+        return exampleSentenceFuzzy;
+    }
+
+    public void setExampleSentenceFuzzy(String exampleSentenceFuzzy){
+        this.exampleSentenceFuzzy = exampleSentenceFuzzy;
+    }
+
+    public String getCreateTimeStart(){
+        return createTimeStart;
+    }
+
+    public void setCreateTimeStart(String createTimeStart){
+        this.createTimeStart = createTimeStart;
+    }
+
+    public String getCreateTimeEnd(){
+        return createTimeEnd;
+    }
+
+    public void setCreateTimeEnd(String createTimeEnd){
+        this.createTimeEnd = createTimeEnd;
+    }
+
+    public List<Integer> getWordLevelList(){
+        return wordLevelList;
+    }
+
+    public void setWordLevelList(List<Integer> wordLevelList){
+        this.wordLevelList = wordLevelList;
+    }
+
+    public List<Long> getExcludeWordIds(){
+        return excludeWordIds;
+    }
+
+    public void setExcludeWordIds(List<Long> excludeWordIds){
+        this.excludeWordIds = excludeWordIds;
+    }
+
+    public Boolean getRandomOrder(){
+        return randomOrder;
+    }
+
+    public void setRandomOrder(Boolean randomOrder){
+        this.randomOrder = randomOrder;
+    }
+
+    public Integer getLimitCount(){
+        return limitCount;
+    }
+
+    public void setLimitCount(Integer limitCount){
+        this.limitCount = limitCount;
+    }
 }

@@ -44,6 +44,12 @@ public class Word implements Serializable{
   private String exampleSentence;
 
 	/**
+	 * @Description: 单词等级（0:初中, 1:高中, 2:四级, 3:六级, 4:考研）
+	 */
+	private Integer wordLevel;
+
+
+	/**
 	 * @Description: 单词记录创建时间
 	 */
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -98,11 +104,17 @@ public class Word implements Serializable{
   	this.createTime = createTime;
   }
 
-  @Override
+  public Integer getWordLevel(){return wordLevel;}
+
+	public void setWordLevel(Integer wordLevel){this.wordLevel = wordLevel;}
+
+
+	@Override
   public String toString() {
   	return "单词表主键ID:" + (id==null?"空":id) + "," +
   	       "单词汉语释义:" + (chinese==null?"空":chinese) + "," +
   	       "英语单词:" + (english==null?"空":english) + "," +
+			"单词等级:" + (wordLevel==null?"空":wordLevel) + "," +
   	       "单词音标:" + (phoneticSymbol==null?"空":phoneticSymbol) + "," +
   	       "例句:" + (exampleSentence==null?"空":exampleSentence) + "," +
   	       "单词记录创建时间:" + (createTime==null?"空":DateUtils.format(createTime, DateTimePatternEnum.YYYY_MM_DD_HH_MM_SS.getPattern()));

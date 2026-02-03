@@ -23,5 +23,6 @@ public class Constants {
     public static final String REDIS_KEY_TASK_REMINDER = "task_reminder:";
     public static final String REDIS_KEY_TASK_DAILY_REMINDER = "task_daily_reminder:";
 
+    public static final Integer DEFAULT_PUSH_COUNT = 10;
 
 }
