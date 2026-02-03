@@ -169,5 +169,6 @@ public class WordController extends ABaseController{
 									 @RequestParam(required = false, defaultValue = "10") Integer count) {
 		return getSuccessResponseVO(this.wordService.getRandomWords(wordLevel, count));
 	}
+
 }
 
