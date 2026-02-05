@@ -170,5 +170,6 @@ public class WordController extends ABaseController{
 		return getSuccessResponseVO(this.wordService.getRandomWords(wordLevel, count));
 	}
 
+
 }
 
