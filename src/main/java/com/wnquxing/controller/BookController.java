@@ -177,35 +177,11 @@ public class BookController extends ABaseController{
 		InputStream inputStream = null;
 		try {
 			// 获取文件输入流
-			inputStream = (InputStream) bookService.downloadBookFile(bookId);
+			inputStream = bookService.downloadBookFile(bookId);
 
-			// 获取书籍信息（用于响应头）
-			Book book = bookService.getById(bookId);
-			if (book == null) {
-				response.sendError(HttpServletResponse.SC_NOT_FOUND, "书籍不存在");
-				return;
-			}
-
-			// 获取文件信息（用于Content-Length）
-			Map<String, Object> fileInfo = bookService.getBookFileInfo(bookId);
-			Long fileSize = (Long) fileInfo.get("fileSize");
-
-			// 设置响应头 - 只返回文件名，不包含ID
-			String fileName = book.getBookName() + ".pdf";
-			// 处理文件名中的特殊字符
-			fileName = fileName.replaceAll("[\\\\/:*?\"<>|]", "_");
-
+			// 设置响应头
 			response.setContentType("application/pdf");
-			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-			response.setHeader("Content-Length", String.valueOf(fileSize));
-
-			// 添加自定义头，供前端显示书籍信息
-			if (book.getBookName() != null) {
-				response.setHeader("X-Book-Name", book.getBookName());
-			}
-			if (book.getAuthor() != null) {
-				response.setHeader("X-Book-Author", book.getAuthor());
-			}
+			response.setHeader("Content-Disposition", "attachment; filename=\"book.pdf\"");
 
 			// 写入文件流
 			byte[] buffer = new byte[8192];
@@ -217,7 +193,7 @@ public class BookController extends ABaseController{
 			}
 
 			outputStream.flush();
-			logger.info("书籍下载完成，ID: {}, 文件名: {}, 大小: {}字节", bookId, fileName, fileSize);
+			logger.info("书籍下载完成，ID: {}", bookId);
 
 		} catch (Exception e) {
 			logger.error("下载书籍失败，ID: {}", bookId, e);
