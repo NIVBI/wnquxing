@@ -174,16 +174,27 @@ public class BookController extends ABaseController{
 	 */
 	@RequestMapping("download")
 	public void download(@RequestParam Long bookId, HttpServletResponse response) {
+		InputStream inputStream = null;
 		try {
-			// 获取文件信息 - 直接调用downloadBookFile方法
-			Map<String, Object> fileInfo = bookService.downloadBookFile(bookId);
+			// 获取文件输入流
+			inputStream = (InputStream) bookService.downloadBookFile(bookId);
 
-			InputStream inputStream = (InputStream) fileInfo.get("inputStream");
-			String fileName = (String) fileInfo.get("fileName");
+			// 获取书籍信息（用于响应头）
+			Book book = bookService.getById(bookId);
+			if (book == null) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND, "书籍不存在");
+				return;
+			}
+
+			// 获取文件信息（用于Content-Length）
+			Map<String, Object> fileInfo = bookService.getBookFileInfo(bookId);
 			Long fileSize = (Long) fileInfo.get("fileSize");
-			Book book = (Book) fileInfo.get("book");
 
-			// 设置响应头
+			// 设置响应头 - 只返回文件名，不包含ID
+			String fileName = book.getBookName() + ".pdf";
+			// 处理文件名中的特殊字符
+			fileName = fileName.replaceAll("[\\\\/:*?\"<>|]", "_");
+
 			response.setContentType("application/pdf");
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 			response.setHeader("Content-Length", String.valueOf(fileSize));
@@ -206,8 +217,6 @@ public class BookController extends ABaseController{
 			}
 
 			outputStream.flush();
-			inputStream.close();
-
 			logger.info("书籍下载完成，ID: {}, 文件名: {}, 大小: {}字节", bookId, fileName, fileSize);
 
 		} catch (Exception e) {
@@ -220,6 +229,14 @@ public class BookController extends ABaseController{
 				}
 			} catch (Exception ex) {
 				// 忽略异常
+			}
+		} finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					logger.error("关闭文件流失败", e);
+				}
 			}
 		}
 	}
@@ -313,21 +330,29 @@ public class BookController extends ABaseController{
 
 	/**
 	 * 预览书籍（在线查看PDF）
-	 * 注意：这里直接使用downloadBookFile方法，因为文件获取逻辑是一样的
-	 * 只是响应头的Content-Disposition不同
 	 */
 	@RequestMapping("preview")
 	public void preview(@RequestParam Long bookId, HttpServletResponse response) {
+		InputStream inputStream = null;
 		try {
-			// 获取文件信息 - 同样使用downloadBookFile方法
-			Map<String, Object> fileInfo = bookService.downloadBookFile(bookId);
+			// 获取书籍信息
+			Book book = bookService.getById(bookId);
+			if (book == null) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND, "书籍不存在");
+				return;
+			}
 
-			InputStream inputStream = (InputStream) fileInfo.get("inputStream");
-			String fileName = (String) fileInfo.get("fileName");
+			// 获取文件输入流
+			inputStream = (InputStream) bookService.previewBookFile(bookId);
+
+			// 获取文件信息（用于Content-Length）
+			Map<String, Object> fileInfo = bookService.getBookFileInfo(bookId);
 			Long fileSize = (Long) fileInfo.get("fileSize");
-			Book book = (Book) fileInfo.get("book");
 
-			// 设置响应头为在线预览（而不是下载）
+			// 设置响应头为在线预览
+			String fileName = book.getBookName() + ".pdf";
+			fileName = fileName.replaceAll("[\\\\/:*?\"<>|]", "_");
+
 			response.setContentType("application/pdf");
 			response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
 			response.setHeader("Content-Length", String.valueOf(fileSize));
@@ -342,8 +367,6 @@ public class BookController extends ABaseController{
 			}
 
 			outputStream.flush();
-			inputStream.close();
-
 			logger.info("书籍预览完成，ID: {}, 文件名: {}", bookId, fileName);
 
 		} catch (Exception e) {
@@ -356,6 +379,14 @@ public class BookController extends ABaseController{
 				}
 			} catch (Exception ex) {
 				// 忽略异常
+			}
+		} finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					logger.error("关闭文件流失败", e);
+				}
 			}
 		}
 	}

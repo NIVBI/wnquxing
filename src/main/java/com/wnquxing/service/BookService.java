@@ -5,6 +5,7 @@ import com.wnquxing.entity.query.BookQuery;
 import com.wnquxing.entity.vo.PaginationResultVO;
 import com.wnquxing.exception.BusinessException;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -108,9 +109,9 @@ public interface BookService{
 	/**
 	 * @Description: 下载书籍文件
 	 * @param bookId 书籍ID
-	 * @return 包含文件流和书籍信息的Map
+	 * @return 文件输入流
 	 */
-	Map<String, Object> downloadBookFile(Long bookId);
+	InputStream downloadBookFile(Long bookId);
 
 	/**
 	 * @Description: 检查书籍文件是否存在
@@ -151,8 +152,8 @@ public interface BookService{
 	/**
 	 * @Description: 预览书籍文件
 	 * @param bookId 书籍ID
-	 * @return 包含文件流和书籍信息的Map
+	 * @return 文件输入流
 	 */
-	Map<String, Object> previewBookFile(Long bookId) throws BusinessException;
+	InputStream previewBookFile(Long bookId) throws BusinessException;
 
 }

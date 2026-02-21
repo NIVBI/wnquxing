@@ -271,7 +271,7 @@ public class BookServiceImpl implements BookService{
 	 * 下载书籍文件
 	 */
 	@Override
-	public Map<String, Object> downloadBookFile(Long bookId) {
+	public InputStream downloadBookFile(Long bookId) {
 		try {
 			// 获取书籍信息
 			Book book = getById(bookId);
@@ -284,34 +284,19 @@ public class BookServiceImpl implements BookService{
 				throw new BusinessException("书籍文件不存在，请确认文件已上传");
 			}
 
-			// 获取文件输入流
-			InputStream fileInputStream = getBookFile(bookId, book.getBookName());
-
-			// 获取文件信息
-			FileInfo fileInfo = getBookFileInfo(bookId, book.getBookName());
-
-			// 准备返回结果
-			Map<String, Object> result = new HashMap<>();
-			result.put("inputStream", fileInputStream);
-			result.put("fileName", book.getBookName() + ".pdf");
-			result.put("fileSize", fileInfo.size);
-			result.put("lastModified", fileInfo.lastModified);
-			result.put("book", book);
-
-			logger.info("准备下载书籍，ID: {}, 书名: {}, 文件大小: {}字节", bookId, book.getBookName(), fileInfo.size);
-			return result;
+			// 获取文件输入流并返回
+			return getBookFile(bookId, book.getBookName());
 
 		} catch (BusinessException e) {
-			// 重新抛出业务异常
             try {
                 throw e;
             } catch (BusinessException ex) {
                 throw new RuntimeException(ex);
             }
         } catch (Exception e) {
-			logger.error("下载书籍文件失败，ID: {}", bookId, e);
+			logger.error("获取书籍文件失败，ID: {}", bookId, e);
             try {
-                throw new BusinessException("下载失败: " + e.getMessage());
+                throw new BusinessException("获取文件失败: " + e.getMessage());
             } catch (BusinessException ex) {
                 throw new RuntimeException(ex);
             }
@@ -319,12 +304,17 @@ public class BookServiceImpl implements BookService{
 	}
 
 	/**
-	 * 预览书籍文件（与下载类似，但前端处理方式不同）
+	 * 预览书籍文件
 	 */
 	@Override
-	public Map<String, Object> previewBookFile(Long bookId) throws BusinessException {
-		// 预览和下载使用相同的文件获取逻辑
-		return downloadBookFile(bookId);
+	public InputStream previewBookFile(Long bookId) throws BusinessException {
+		try {
+			// 预览和下载使用相同的文件获取逻辑
+			return downloadBookFile(bookId);
+		} catch (Exception e) {
+			logger.error("预览书籍文件失败，ID: {}", bookId, e);
+			throw new BusinessException("预览失败: " + e.getMessage());
+		}
 	}
 
 	/**
@@ -487,7 +477,8 @@ public class BookServiceImpl implements BookService{
 
 		// 清理文件名中的非法字符
 		String safeBookName = bookName.replaceAll("[\\\\/:*?\"<>|]", "_");
-		String fileName = bookId + "_" + safeBookName + ".pdf";
+		// 只使用书籍名，不包含ID前缀
+		String fileName = safeBookName + ".pdf";
 
 		return Paths.get(storagePath, fileName).toString();
 	}
