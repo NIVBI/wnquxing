@@ -27,4 +27,23 @@ public class Constants {
     // 默认每页显示数量
     private static final int DEFAULT_PAGE_SIZE = 10;
 
+    //视频并发量
+    private static final int MAX_CONCURRENT_MATCH =10;
+    // 视频匹配相关Redis key
+    public static final String REDIS_KEY_MATCH_WAITING_QUEUE = EASYMEETING + "match:waiting:"; // 等待队列（List）
+    public static final String REDIS_KEY_MATCH_USER_INFO = EASYMEETING + "match:user:"; // 用户匹配信息（Hash）
+    public static final String REDIS_KEY_MATCH_ROOM_USERS = EASYMEETING + "match:room:"; // 房间用户集合（Set）
+    public static final String REDIS_KEY_MATCH_ROOM_INFO = EASYMEETING + "match:room:info:"; // 房间信息（Hash）
+
+    // 匹配超时时间（秒）
+    public static final Integer MATCH_TIMEOUT = 30; // 30秒匹配超时
+    public static final Integer MATCH_ROOM_EXPIRE = 3600; // 房间过期时间（1小时）
+
+    // 匹配状态常量
+    public static final Integer MATCH_STATUS_WAITING = 0; // 等待中
+    public static final Integer MATCH_STATUS_SUCCESS = 1; // 匹配成功
+    public static final Integer MATCH_STATUS_PEER_LEFT = 2; // 对方已离开
+    // 添加超时消息类型常量
+    public static final String MATCH_TIMEOUT_TYPE = "match_timeout";
+
 }
