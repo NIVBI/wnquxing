@@ -379,45 +379,56 @@ public class SupervisionMatchServiceImpl implements SupervisionMatchService{@Res
 	@Override
 	public Integer leaveRoom(String roomName, Long userId) {
 		if (roomName == null || userId == null) {
-            try {
-                throw new BusinessException("房间名和用户ID不能为空");
-            } catch (BusinessException e) {
-                throw new RuntimeException(e);
-            }
-        }
+			try {
+				throw new BusinessException("房间名和用户ID不能为空");
+			} catch (BusinessException e) {
+				throw new RuntimeException(e);
+			}
+		}
 
 		log.info("用户 {} 退出房间 {}", userId, roomName);
 
-		// 从Redis房间中移除用户
+		// 获取房间内的所有用户
+		Set<String> roomUsers = redisComponent.getRoomUsers(roomName);
+		if (roomUsers == null || roomUsers.isEmpty()) {
+			return 0;
+		}
+
+		// 找到另一个用户（如果存在）
+		String otherUserId = null;
+		for (String uid : roomUsers) {
+			if (!uid.equals(String.valueOf(userId))) {
+				otherUserId = uid;
+				break;
+			}
+		}
+
+		// 从Redis房间中移除当前用户
 		redisComponent.removeUserFromRoom(roomName, userId);
 
-		// 删除用户的匹配信息
+		// 删除当前用户的匹配信息
 		redisComponent.deleteUserMatchInfo(userId);
 
-		// 获取房间剩余用户
-		Set<String> remainingUsers = redisComponent.getRoomUsers(roomName);
+		// 如果存在另一个用户，也让其退出
+		if (otherUserId != null) {
+			log.info("用户 {} 退出房间，自动让另一个用户 {} 也退出", userId, otherUserId);
 
-		if (remainingUsers == null || remainingUsers.isEmpty()) {
-			// 房间为空，删除数据库记录
-			deleteByRoomName(roomName);
-			log.info("房间 {} 已关闭", roomName);
-		} else {
-			// 还有用户在线，通知对方
-			String remainingUserId = remainingUsers.iterator().next();
+			// 从Redis房间中移除另一个用户
+			redisComponent.removeUserFromRoom(roomName, Long.parseLong(otherUserId));
 
-			// 更新剩余用户的匹配状态
-			Map<String, String> userInfo = redisComponent.getUserMatchInfo(Long.parseLong(remainingUserId));
-			if (userInfo != null) {
-				redisComponent.updateUserMatchStatus(Long.parseLong(remainingUserId), Constants.MATCH_STATUS_PEER_LEFT);
-			}
+			// 删除另一个用户的匹配信息
+			redisComponent.deleteUserMatchInfo(Long.parseLong(otherUserId));
 
-			// 发送WebSocket通知
-			messageHandler.sendPeerLeftMessage(remainingUserId, roomName);
+			// 发送通知给另一个用户：对方已离开，房间关闭
+			messageHandler.sendPeerLeftMessage(otherUserId, roomName);
 		}
+
+		// 无论房间是否还有用户，都删除数据库记录（因为是一对一房间）
+		deleteByRoomName(roomName);
+		log.info("房间 {} 已关闭", roomName);
 
 		return 1;
 	}
-
 	/**
 	 * 查询匹配状态
 	 */
