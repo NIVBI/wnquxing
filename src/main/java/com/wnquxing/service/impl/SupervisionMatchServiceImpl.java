@@ -423,6 +423,7 @@ public class SupervisionMatchServiceImpl implements SupervisionMatchService{@Res
 			messageHandler.sendPeerLeftMessage(otherUserId, roomName);
 		}
 
+
 		// 无论房间是否还有用户，都删除数据库记录（因为是一对一房间）
 		deleteByRoomName(roomName);
 		log.info("房间 {} 已关闭", roomName);
