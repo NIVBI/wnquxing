@@ -28,6 +28,16 @@ public class CheckInQuery extends BaseQuery{
 	 */
   private String userId;
 
+    private Integer checkType;
+
+    public Integer getCheckType() {
+        return checkType;
+    }
+
+    public void setCheckType(Integer checkType) {
+        this.checkType = checkType;
+    }
+
 	/**
 	 * @Description: 打卡情况（0-未打卡，1-已打卡，2-迟到打卡等）
 	 */

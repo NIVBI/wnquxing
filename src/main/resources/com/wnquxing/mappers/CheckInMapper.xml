@@ -20,14 +20,18 @@
   	<result column="check_status" property="checkStatus"/>
 
   	<!--打卡记录创建时间-->
-  	<result column="create_time" property="createTime"/>
+	  <result column="create_time" property="createTime"/>
+
+	  <result column="check_type" property="checkType"/>
+
+
 
 
   </resultMap>
 
   <!--通用查询列-->
   <sql id="base_column_list">
-  	id, check_time, user_id, check_status, create_time 
+  	id, check_time, user_id, check_status, create_time ,check_type
   </sql>
 
   <!--基础查询条件-->
@@ -44,6 +48,9 @@
   	<if test="query.checkStatus !=null">
   		and check_status = #{query.checkStatus}
   	</if>
+	  <if test="query.checkType !=null">
+		  and check_type = #{query.checkType}
+	  </if>
   	<if test="query.createTime !=null">
   		and create_time = #{query.createTime}
   	</if>

@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云自习室 - 主页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecf5 100%);
+            min-height: 100vh;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 28px;
+            color: #667eea;
+        }
+
+        .logo span {
+            font-size: 22px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #667eea;
+        }
+
+        .nav-link.active {
+            color: #667eea;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .user-name {
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* 主要内容区 */
+        .main-content {
+            max-width: 1200px;
+            margin: 100px auto 40px;
+            padding: 0 20px;
+        }
+
+        /* 欢迎横幅 */
+        .welcome-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .welcome-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 250px;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .welcome-text {
+            font-size: 16px;
+            opacity: 0.9;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* 功能区标题 */
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #667eea;
+            font-size: 28px;
+        }
+
+        /* 功能卡片网格 - 6个入口 */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .feature-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 32px;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            color: #999;
+            line-height: 1.5;
+        }
+
+        .feature-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff6b6b;
+            color: white;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            animation: pulse 2s infinite;
+        }
+
+        .ai-badge {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* 双列布局 */
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 推荐内容卡片 */
+        .recommend-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .recommend-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .recommend-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recommend-title i {
+            color: #667eea;
+        }
+
+        .more-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: gap 0.3s;
+        }
+
+        .more-link:hover {
+            gap: 8px;
+        }
+
+        /* 书籍列表 */
+        .book-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .book-item {
+            display: flex;
+            gap: 15px;
+            padding: 10px;
+            border-radius: 12px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .book-item:hover {
+            background: #f8f9ff;
+        }
+
+        .book-cover {
+            width: 60px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .book-info {
+            flex: 1;
+        }
+
+        .book-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .book-author {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .book-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .book-rating {
+            color: #ffb800;
+        }
+
+        /* 房间列表 */
+        .room-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .room-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .room-item:hover {
+            background: #e8eaff;
+            transform: translateX(5px);
+        }
+
+        .room-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .room-avatar {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .room-name {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .room-users {
+            font-size: 14px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .room-status {
+            padding: 4px 12px;
+            background: #4caf50;
+            color: white;
+            font-size: 12px;
+            border-radius: 20px;
+        }
+
+        /* AI助手快速问答卡片 */
+        .ai-quick-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .ai-quick-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .ai-quick-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .ai-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .ai-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .ai-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .ai-quick-input {
+            display: flex;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 5px 5px 5px 20px;
+            margin-top: 15px;
+        }
+
+        .ai-quick-input input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .ai-quick-input input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .ai-quick-input button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .ai-quick-input button:hover {
+            transform: scale(1.1);
+        }
+
+        /* 单词卡片 */
+        .word-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .word-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .word-english {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .word-chinese {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .word-progress {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            height: 6px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .word-progress-bar {
+            width: 65%;
+            height: 100%;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .word-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* 用户信息卡片 */
+        .user-profile-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .profile-avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .profile-info h3 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .profile-info p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+
+        .profile-stat-item .number {
+            font-size: 24px;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .profile-stat-item .label {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .profile-menu {
+            margin-top: 20px;
+        }
+
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .profile-menu-item:hover {
+            background: #f8f9ff;
+            color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .profile-menu-item i {
+            width: 20px;
+            color: #667eea;
+        }
+
+        /* 底部 */
+        .footer {
+            background: white;
+            padding: 30px 0;
+            margin-top: 60px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-links a {
+            color: #999;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #667eea;
+        }
+
+        /* 加载动画 */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 工具类 */
+        .badge {
+            background: #ff6b6b;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
+    </style>
+    <!-- 引入 Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<!-- 加载动画 -->
+<div class="loading" id="loading">
+    <div class="loading-spinner"></div>
+</div>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo" onclick="navigateTo('/')">
+            <i class="fas fa-cloud"></i>
+            <span>云自习室</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="#" class="nav-link active" onclick="switchNav(this, 'home')">首页</a>
+            <a href="#" class="nav-link" onclick="switchNav(this, 'ai')">AI助手</a>
+        </div>
+
+        <div class="user-menu">
+            <span class="user-name">张三</span>
+            <div class="user-avatar" onclick="navigateTo('/profile')">
+                <span>张</span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- 主要内容区 -->
+<div class="main-content">
+    <!-- 欢迎横幅 -->
+    <div class="welcome-banner">
+        <div class="welcome-content">
+            <h1 class="welcome-title">下午好，张三 👋</h1>
+            <p class="welcome-text">今天已经学习了 2.5 小时，继续保持！你的自习室伙伴们都在等你。</p>
+
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-number">15</span>
+                    <span class="stat-label">连续学习天数</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">128</span>
+                    <span class="stat-label">总学习小时</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">8</span>
+                    <span class="stat-label">自习伙伴</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 六个功能入口 -->
+    <h2 class="section-title">
+        <i class="fas fa-rocket"></i>
+        快速开始
+    </h2>
+
+    <div class="features-grid">
+        <!-- 1. 匹配视频监督 -->
+        <div class="feature-card" onclick="navigateTo('/supervision/match')">
+            <div class="feature-icon">
+                <i class="fas fa-video"></i>
+            </div>
+            <h3 class="feature-title">视频监督</h3>
+            <p class="feature-desc">随机匹配学习伙伴，互相监督共同进步</p>
+            <div class="feature-badge">在线 12人</div>
+        </div>
+
+        <!-- 2. 书城功能 -->
+        <div class="feature-card" onclick="navigateTo('/bookstore')">
+            <div class="feature-icon">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <h3 class="feature-title">云上书城</h3>
+            <p class="feature-desc">海量电子书资源，随时随地畅读</p>
+            <div class="feature-badge">新书上线</div>
+        </div>
+
+        <!-- 3. 背单词功能 -->
+        <div class="feature-card" onclick="navigateTo('/vocabulary')">
+            <div class="feature-icon">
+                <i class="fas fa-language"></i>
+            </div>
+            <h3 class="feature-title">单词闯关</h3>
+            <p class="feature-desc">科学记忆法，轻松突破词汇量</p>
+            <div class="feature-badge">今日已学 25词</div>
+        </div>
+
+        <!-- 4. AI助手（新增） -->
+        <div class="feature-card" onclick="navigateTo('/ai/chat')">
+            <div class="feature-icon" style="background: linear-gradient(135deg, #FF6B6B, #FF8E53);">
+                <i class="fas fa-robot"></i>
+            </div>
+            <h3 class="feature-title">AI助手</h3>
+            <p class="feature-desc">智能问答、学习规划、答疑解惑</p>
+            <div class="feature-badge ai-badge">24h在线</div>
+        </div>
+
+        <!-- 5. 学习计时 -->
+        <div class="feature-card" onclick="navigateTo('/timer')">
+            <div class="feature-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h3 class="feature-title">专注计时</h3>
+            <p class="feature-desc">番茄工作法，提高学习效率</p>
+            <div class="feature-badge">专注中</div>
+        </div>
+
+        <!-- 6. 用户界面 -->
+        <div class="feature-card" onclick="navigateTo('/profile')">
+            <div class="feature-icon">
+                <i class="fas fa-user"></i>
+            </div>
+            <h3 class="feature-title">个人中心</h3>
+            <p class="feature-desc">查看学习数据，管理个人信息</p>
+        </div>
+    </div>
+
+    <!-- 双列布局：推荐内容 -->
+    <div class="row">
+        <!-- 左侧：AI助手快速问答 -->
+        <div class="ai-quick-card" onclick="navigateTo('/ai/chat')">
+            <div class="ai-quick-header">
+                <div class="ai-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div>
+                    <div class="ai-title">AI学习助手</div>
+                    <div class="ai-subtitle">随时提问，秒级响应</div>
+                </div>
+            </div>
+            <p style="margin-bottom: 15px; opacity: 0.9;">可以问我任何学习问题：数学、英语、编程...</p>
+            <div class="ai-quick-input" onclick="event.stopPropagation()">
+                <input type="text" placeholder="例如：如何提高记忆力？" id="aiQuickQuestion">
+                <button onclick="askAIQuick()"><i class="fas fa-arrow-right"></i></button>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 15px; font-size: 12px; opacity: 0.8;">
+                <span><i class="fas fa-clock"></i> 24小时在线</span>
+                <span><i class="fas fa-comment"></i> 今日已回答 128个问题</span>
+            </div>
+        </div>
+
+        <!-- 右侧：热门自习室 -->
+        <div class="recommend-card">
+            <div class="recommend-header">
+                <h3 class="recommend-title">
+                    <i class="fas fa-users"></i>
+                    热门自习室
+                </h3>
+                <a href="#" class="more-link" onclick="navigateTo('/supervision')">
+                    更多 <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="room-list">
+                <div class="room-item" onclick="joinRoom('考研突击队')">
+                    <div class="room-info">
+                        <div class="room-avatar">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div>
+                            <div class="room-name">考研突击队</div>
+                            <div class="room-users">
+                                <i class="fas fa-user"></i> 23人
+                            </div>
+                        </div>
+                    </div>
+                    <div class="room-status">进行中</div>
+                </div>
+
+                <div class="room-item" onclick="joinRoom('Java学习小组')">
+                    <div class="room-info">
+                        <div class="room-avatar">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div>
+                            <div class="room-name">Java学习小组</div>
+                            <div class="room-users">
+                                <i class="fas fa-user"></i> 15人
+                            </div>
+                        </div>
+                    </div>
+                    <div class="room-status">进行中</div>
+                </div>
+
+                <div class="room-item" onclick="joinRoom('英语晨读')">
+                    <div class="room-info">
+                        <div class="room-avatar">
+                            <i class="fas fa-language"></i>
+                        </div>
+                        <div>
+                            <div class="room-name">英语晨读</div>
+                            <div class="room-users">
+                                <i class="fas fa-user"></i> 12人
+                            </div>
+                        </div>
+                    </div>
+                    <div class="room-status">即将开始</div>
+                </div>
+
+                <div class="room-item" onclick="joinRoom('AI学习小组')">
+                    <div class="room-info">
+                        <div class="room-avatar" style="background: #FF6B6B;">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div>
+                            <div class="room-name">AI学习小组</div>
+                            <div class="room-users">
+                                <i class="fas fa-user"></i> 8人
+                            </div>
+                        </div>
+                    </div>
+                    <div class="room-status">进行中</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 第二行：今日单词 + 用户信息 -->
+    <div class="row">
+        <!-- 左侧：今日单词 -->
+        <div class="recommend-card">
+            <div class="recommend-header">
+                <h3 class="recommend-title">
+                    <i class="fas fa-language"></i>
+                    今日单词
+                </h3>
+                <a href="#" class="more-link" onclick="navigateTo('/vocabulary')">
+                    开始学习 <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="word-card" onclick="navigateTo('/vocabulary/learn')">
+                <div class="word-english">perseverance</div>
+                <div class="word-chinese">n. 毅力；坚持不懈</div>
+                <div class="word-progress">
+                    <div class="word-progress-bar"></div>
+                </div>
+                <div class="word-stats">
+                    <span>今日已学 15/30</span>
+                    <span>掌握率 65%</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                <div style="flex: 1; text-align: center; padding: 10px; background: #f8f9ff; border-radius: 10px;">
+                    <div style="font-size: 20px; font-weight: 600; color: #667eea;">1280</div>
+                    <div style="font-size: 12px; color: #999;">总词汇量</div>
+                </div>
+                <div style="flex: 1; text-align: center; padding: 10px; background: #f8f9ff; border-radius: 10px;">
+                    <div style="font-size: 20px; font-weight: 600; color: #667eea;">7</div>
+                    <div style="font-size: 12px; color: #999;">连续打卡</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧：用户信息卡片 -->
+        <div class="user-profile-card">
+            <div class="profile-header">
+                <div class="profile-avatar-large">
+                    <span>张</span>
+                </div>
+                <div class="profile-info">
+                    <h3>张三</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> 北京 · 大学生</p>
+                    <p><i class="fas fa-envelope"></i> zhangsan@example.com</p>
+                </div>
+            </div>
+
+            <div class="profile-stats">
+                <div class="profile-stat-item">
+                    <div class="number">128</div>
+                    <div class="label">学习小时</div>
+                </div>
+                <div class="profile-stat-item">
+                    <div class="number">15</div>
+                    <div class="label">连续天数</div>
+                </div>
+                <div class="profile-stat-item">
+                    <div class="number">86</div>
+                    <div class="label">AI提问</div>
+                </div>
+            </div>
+
+            <div class="profile-menu">
+                <div class="profile-menu-item" onclick="navigateTo('/profile/tasks')">
+                    <i class="fas fa-tasks"></i>
+                    <span>我的任务</span>
+                    <span class="badge">3</span>
+                </div>
+                <div class="profile-menu-item" onclick="navigateTo('/profile/books')">
+                    <i class="fas fa-book"></i>
+                    <span>我的书架</span>
+                    <span class="badge">2</span>
+                </div>
+                <div class="profile-menu-item" onclick="navigateTo('/profile/ai-history')">
+                    <i class="fas fa-robot"></i>
+                    <span>AI对话历史</span>
+                    <span class="badge">12</span>
+                </div>
+                <div class="profile-menu-item" onclick="navigateTo('/profile/settings')">
+                    <i class="fas fa-cog"></i>
+                    <span>设置</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 底部 -->
+<footer class="footer">
+    <div class="footer-container">
+        <div>© 2026 云自习室. All rights reserved.</div>
+        <div class="footer-links">
+            <a href="#">关于我们</a>
+            <a href="#">帮助中心</a>
+            <a href="#">隐私政策</a>
+            <a href="#">用户协议</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // 显示加载动画
+    function showLoading() {
+        document.getElementById('loading').classList.add('active');
+    }
+
+    // 隐藏加载动画
+    function hideLoading() {
+        document.getElementById('loading').classList.remove('active');
+    }
+
+    // 导航函数
+    function navigateTo(path) {
+        showLoading();
+        console.log('导航到:', path);
+
+        // 模拟页面跳转
+        setTimeout(() => {
+            hideLoading();
+
+            // 根据不同功能显示不同提示
+            switch(path) {
+                case '/supervision/match':
+                    alert('正在进入视频监督匹配...');
+                    break;
+                case '/bookstore':
+                    alert('正在进入云上书城...');
+                    break;
+                case '/vocabulary':
+                    alert('正在进入单词闯关...');
+                    break;
+                case '/ai/chat':
+                    alert('正在进入AI助手...');
+                    break;
+                case '/timer':
+                    alert('正在进入专注计时...');
+                    break;
+                case '/profile':
+                    alert('正在进入个人中心...');
+                    break;
+            }
+        }, 500);
+    }
+
+    // 快速提问
+    function askAIQuick() {
+        const question = document.getElementById('aiQuickQuestion').value;
+        if (!question) {
+            alert('请输入您的问题');
+            return;
+        }
+        showLoading();
+        console.log('快速提问:', question);
+
+        setTimeout(() => {
+            hideLoading();
+            alert(`AI助手回答：关于"${question}"的问题，建议您...`);
+            // 实际应该跳转到AI对话页面并自动填充问题
+            // window.location.href = '/ai/chat?q=' + encodeURIComponent(question);
+        }, 800);
+    }
+
+    // 切换导航
+    function switchNav(element, section) {
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        element.classList.add('active');
+        console.log('切换到:', section);
+
+        if (section === 'ai') {
+            navigateTo('/ai/chat');
+        }
+    }
+
+    // 加入房间
+    function joinRoom(roomName) {
+        showLoading();
+        console.log('加入房间:', roomName);
+
+        setTimeout(() => {
+            hideLoading();
+            alert(`正在加入"${roomName}"自习室...`);
+        }, 500);
+    }
+
+    // 页面加载完成后的初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('云自习室主页加载完成（含AI助手）');
+    });
+
+    // 监听滚动改变导航样式
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+            navbar.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.1)';
+        } else {
+            navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+        }
+    });
+
+    // 添加键盘快捷键
+    document.addEventListener('keydown', function(e) {
+        // Alt + 1 到 6 快速访问功能
+        if (e.altKey) {
+            switch(e.key) {
+                case '1':
+                    navigateTo('/supervision/match');
+                    break;
+                case '2':
+                    navigateTo('/bookstore');
+                    break;
+                case '3':
+                    navigateTo('/vocabulary');
+                    break;
+                case '4':
+                    navigateTo('/ai/chat');
+                    break;
+                case '5':
+                    navigateTo('/timer');
+                    break;
+                case '6':
+                    navigateTo('/profile');
+                    break;
+            }
+        }
+    });
+</script>
+</body>
+</html>

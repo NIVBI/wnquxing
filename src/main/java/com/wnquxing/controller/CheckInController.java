@@ -34,8 +34,8 @@ public class CheckInController extends ABaseController{
 	/**
 	 * @Description: 新增
 	 */
-  @RequestMapping("add")
-  public ResponseVO add(CheckIn bean){
+  @RequestMapping("checkIn")
+  public ResponseVO checkIn(CheckIn bean){
   	this.checkInService.add(bean);
   	return getSuccessResponseVO(null);
   }

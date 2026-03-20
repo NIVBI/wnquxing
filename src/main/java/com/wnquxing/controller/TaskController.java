@@ -95,9 +95,9 @@ public class TaskController extends ABaseController{
 	 */
 	@PostMapping("/createWithReminder")
 	public ResponseVO<Long> createTaskWithReminder(
-			@RequestBody Task task,
-			@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date remindStartTime,
-			@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date remindEndTime,
+			@ModelAttribute Task task,
+			@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date remindStartTime,
+			@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date remindEndTime,
 			@RequestParam(defaultValue = "8") Integer remindHour) {
 
 		ResponseVO<Long> response = new ResponseVO<>();
@@ -135,8 +135,8 @@ public class TaskController extends ABaseController{
 	@PostMapping("/updateReminder/{taskId}")
 	public ResponseVO<Void> updateReminder(
 			@PathVariable Long taskId,
-			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date newStartTime,
-			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date newEndTime,
+			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date newStartTime,
+			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date newEndTime,
 			@RequestParam(required = false) Integer newRemindHour) {
 
 		ResponseVO<Void> response = new ResponseVO<>();

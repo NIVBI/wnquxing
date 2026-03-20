@@ -27,29 +27,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
- * 
+ *
  * @Auther:关山越
- * 
+ *
  * @Description:监督匹配房间信息表ServiceImpl
- * 
+ *
  * @Date:2026-01-12
- * 
+ *
  */
 @Service("supervisionMatchService")
-public class SupervisionMatchServiceImpl implements SupervisionMatchService{@Resource
-
-
+public class SupervisionMatchServiceImpl implements SupervisionMatchService {
 
 	// 并发量控制 - 最大同时匹配用户数
 	private static final int MAX_CONCURRENT_MATCH = 10;
 	private final AtomicInteger currentMatchCount = new AtomicInteger(0);
 
+	private static final Logger log = LoggerFactory.getLogger(SupervisionMatchServiceImpl.class);
 
-	private static Logger log = LoggerFactory.getLogger(SupervisionMatchServiceImpl.class);
+	@Resource
+	private SupervisionMatchMapper<SupervisionMatch, SupervisionMatchQuery> supervisionMatchMapper;
 
-  @Resource
-  private SupervisionMatchMapper<SupervisionMatch, SupervisionMatchQuery> supervisionMatchMapper;@Resource
-
+	@Resource
 	private RedisComponent redisComponent;
 
 	@Resource
@@ -57,7 +55,6 @@ public class SupervisionMatchServiceImpl implements SupervisionMatchService{@Res
 
 	@Resource
 	private MessageHandler messageHandler;
-
 	/**
 	 * @Description: 根据条件查询列表
 	 */
